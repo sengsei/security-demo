@@ -2,11 +2,13 @@ package de.neuefische.securitydemo;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -29,16 +31,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (token != null && !token.isBlank()){
             try {
                 Claims claims = jwtService.parseClaims(token);
-
+                setSecurityContext(claims);
             } catch (Exception e){
-
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "token invalid");
             }
         }
+        filterChain.doFilter(request, response);
     }
 
     private String getAuthToken(HttpServletRequest request){
-        String authorisation = request.getHeader("Authorisation");
-        return authorisation != null ? authorisation.replace("Bearer", "").trim() : null;
+        String authorization = request.getHeader("Authorization");
+        return authorization != null ? authorization.replace("Bearer", "").trim() : null;
     }
 
     private void setSecurityContext(Claims claims){
