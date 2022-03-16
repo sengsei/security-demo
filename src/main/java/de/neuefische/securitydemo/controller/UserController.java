@@ -1,5 +1,7 @@
-package de.neuefische.securitydemo;
+package de.neuefische.securitydemo.controller;
 
+import de.neuefische.securitydemo.UserDocument;
+import de.neuefische.securitydemo.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
